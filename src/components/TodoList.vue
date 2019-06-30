@@ -1,21 +1,16 @@
-<template>
+ <template>
     <div>
       <input type="text" class="form-control" placeholder="what needs to be done" v-model="newTodo" @keyup.enter="addTodo">
-      
-        <div v-for="(todo , index) in todosFiltered" :key="todo.id" class="todo-item">
-          <div class="content-left">
-            <input type="checkbox" v-if="!todo.editing" v-model="todo.completed">
-            <div v-if="!todo.editing" @dblclick="editTodo(todo)" :class="{ completed : todo.completed}" class="space">
-              {{ todo.title }}  
-            </div>
-            <input type="text" v-else class="form-control" v-focus v-model="todo.title"
-             @blur="doneEdit(todo)" @keyup.enter="doneEdit(todo)" @keyup.esc="cancelEdit(todo)">   
-          </div>
 
-          <div class="remove-item" @click="removeTodo(index)">
-            &times;
-          </div>
-        </div> 
+        <todo-item
+        v-for="(todo , index) in todosFiltered" :key="todo.id"
+        :todo="todo"
+        :index="index"
+        :checkAll="!anyRemaining"
+        @removed="removeTodo"
+        @finishedEdit="finishedEdit" >
+
+        </todo-item>
 
         <div class="extra-container">
           <div><label><input type="checkbox" :checked="!anyRemaining" @change="checkAllTodos">Check All</label></div>
@@ -29,19 +24,22 @@
             <button class="btn" :class="{ active: filter == 'completed' }" @click="filter = 'completed'">Completed</button>
           </div>
 
-          <button class="btn badge badge-pill badge-danger" v-if="showClearCompleted" @click="clearCompleted">
-            Clear Completed
-          </button>
-
+          <transition name="fade">
+            <button class="btn badge badge-pill badge-danger" v-if="showClearCompleted" @click="clearCompleted">
+                Clear Completed
+              </button>
+          </transition>
         </div>
-        
-
     </div>
 </template>
 
 <script>
+import TodoItem from './TodoItem'
 export default {
   name: 'todo-list',
+  components: {
+    TodoItem,
+  },
   data () {
     return {
       newTodo: '',
@@ -51,19 +49,19 @@ export default {
       todos: [
         {
           'id': 1,
-          'title': 'Laravel',
+          'title': 'Laravel 5.8',
           'completed': false,
           'editing': false
         },
          {
           'id': 2,
-          'title': 'Bootstrap',
+          'title': 'Bootstrap 4.2',
           'completed': false,
           'editing': false
         },
          {
           'id': 3,
-          'title': 'Vue',
+          'title': 'Vue 2.2',
           'completed': false,
           'editing': false
         }
@@ -79,7 +77,7 @@ export default {
       return this.remaining != 0
     },
     todosFiltered() {
-      if(this.filter == 'all') 
+      if(this.filter == 'all')
       {
         return this.todos
       }
@@ -110,7 +108,7 @@ export default {
   methods: {
     addTodo() {
       if(this.newTodo.trim().length == 0) {
-        return 
+        return
       }
 
       this.todos.push({
@@ -143,6 +141,9 @@ export default {
       todo.title = this.beforeEditCache
       todo.editing = false
     },
+    finishedEdit(data){
+        this.todos.splice(data.index , 1 , data.todo)
+    },
 
     removeTodo(index) {
       this.todos.splice(index , 1)
@@ -169,7 +170,7 @@ export default {
   margin-bottom: 12px;
   display: flex;
   align-items: center;
-  justify-content: space-between; 
+  justify-content: space-between;
 }
 
 .remove-item {
@@ -218,7 +219,16 @@ button {
 }
 
 .active {
-  background-color: rgb(9, 209, 133); 
+  background-color: rgb(9, 209, 133);
+}
+
+//CSS TRANSITION
+.fade-enter-active , .fade-leave-active {
+  transition: opcity .2s;
+}
+
+.fade-enter , .fade-leave-to {
+  opcity: 0;
 }
 
 </style>
