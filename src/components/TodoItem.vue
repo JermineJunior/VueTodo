@@ -1,6 +1,7 @@
 <template>
   <div class="todo-item">
     <div class="content-left">
+          <input type="checkbox" v-model="completed" @change="doneEdit">
           <div v-if="!editing" @dblclick="editTodo" :class="{ completed : completed}" class="space">
             {{title }}
           </div>
@@ -40,6 +41,19 @@ export default {
       'beforeEditCache':''
     }
   },
+  watch: {
+    checkAll() {
+      this.completed = this.checkAll ? true : this.todo.completed;
+    }
+  },
+  directives: {
+  focus: {
+    // directive definition
+    inserted: function (el) {
+      el.focus()
+    }
+  }
+},
   methods: {
     removeTodo(index){
       this.$emit('removed',index)
