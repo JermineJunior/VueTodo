@@ -95,16 +95,6 @@ export default {
       return this.todos.filter(todo => todo.completed).length > 0
     }
   },
-
-  directives: {
-  focus: {
-    // directive definition
-    inserted: function (el) {
-      el.focus()
-    }
-  }
-},
-
   methods: {
     addTodo() {
       if(this.newTodo.trim().length == 0) {
@@ -121,25 +111,6 @@ export default {
 
       this.newTodo = '',
       this.idForTodod++
-    },
-
-    editTodo(todo) {
-      this.beforeEditCache = todo.title
-      todo.editing = true
-    },
-
-    doneEdit(todo) {
-      if(todo.title.trim() == '') {
-        todo.title = this.beforeEditCache
-      }
-
-      // beforeEditCache = todo.title
-      todo.editing = false
-    },
-
-    cancelEdit(todo) {
-      todo.title = this.beforeEditCache
-      todo.editing = false
     },
     finishedEdit(data){
         this.todos.splice(data.index , 1 , data.todo)

@@ -1,7 +1,6 @@
 <template>
   <div class="todo-item">
     <div class="content-left">
-          <input type="checkbox" v-model="completed">
           <div v-if="!editing" @dblclick="editTodo" :class="{ completed : completed}" class="space">
             {{title }}
           </div>
