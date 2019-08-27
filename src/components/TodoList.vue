@@ -6,9 +6,7 @@
         v-for="(todo , index) in todosFiltered" :key="todo.id"
         :todo="todo"
         :index="index"
-        :checkAll="!anyRemaining"
-        @removed="removeTodo"
-        @finishedEdit="finishedEdit" >
+        :checkAll="!anyRemaining" >
 
         </todo-item>
 
@@ -37,9 +35,7 @@
 import TodoItem from './TodoItem'
 export default {
   name: 'todo-list',
-  components: {
-    TodoItem,
-  },
+  components: {TodoItem},
   data () {
     return {
       newTodo: '',
@@ -49,26 +45,29 @@ export default {
       todos: [
         {
           'id': 1,
-          'title': 'Laravel 5.8',
+          'title': 'Laravel',
           'completed': false,
           'editing': false
         },
          {
           'id': 2,
-          'title': 'Bootstrap 4.2',
+          'title': 'Bootstrap',
           'completed': false,
           'editing': false
         },
          {
           'id': 3,
-          'title': 'Vue 2.2',
+          'title': 'Vue',
           'completed': false,
           'editing': false
         }
       ]
     }
   },
-
+  created() {
+    eventBus.$on('removedTodo',(index) => this.removeTodo(index))
+    eventBus.$on('finishedEdit',(data) => this.finishedEdit(data))
+  },
   computed: {
     remaining() {
       return this.todos.filter(todo => !todo.completed).length

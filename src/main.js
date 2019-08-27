@@ -6,7 +6,7 @@ import Vue from 'vue'
 import App from './App'
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
-
+window.eventBus = new Vue();
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
@@ -15,4 +15,3 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
-  
