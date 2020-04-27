@@ -3,13 +3,12 @@
     <div class="content-left">
           <input type="checkbox" v-model="completed" @change="doneEdit">
           <div v-if="!editing" @dblclick="editTodo" :class="{ completed : completed}" class="space">
-            {{title }}
+            {{ title }}
           </div>
           <input v-else type="text" class="form-control" v-focus v-model="title"
           @blur="doneEdit" @keyup.enter="doneEdit" @keyup.esc="cancelEdit">
         </div>
         <div>
-          <button @click="pluralize" class="btn btn-light" >Plural</button>
           <span class="remove-item" @click="removeTodo(index)">
             &times;
           </span>
@@ -67,8 +66,20 @@ export default {
     },
 
     editTodo() {
-      this.beforeEditCache = this.title
-      this.editing = true
+       this.beforeEditCache = this.title
+       this.editing = true
+      axios.patch('/todos/' + this.id, {
+            id: this.idForTodo,
+            title: todo.title,
+            completed: todo.completed,
+            editing: todo.editing
+          })
+          .then(function (response) {
+
+          })
+          .catch(function (error) {
+          })
+
     },
 
     doneEdit() {

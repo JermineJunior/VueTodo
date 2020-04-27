@@ -1,27 +1,22 @@
  <template>
     <div>
       <input type="text" class="form-control" placeholder="what needs to be done" v-model="newTodo" @keyup.enter="addTodo">
-
         <todo-item
         v-for="(todo , index) in todosFiltered" :key="todo.id"
         :todo="todo"
         :index="index"
         :checkAll="!anyRemaining" >
-
         </todo-item>
-
         <div class="extra-container">
           <div><label><input type="checkbox" :checked="!anyRemaining" @change="checkAllTodos">Check All</label></div>
           <dir class="badge badge-pill badge-dark">{{ remaining }} items left</dir>
         </div>
-
         <div class="extra-container">
           <div>
             <button class="btn" :class="{ active: filter == 'all' }" @click="filter = 'all'">All</button>
             <button class="btn" :class="{ active: filter == 'active' }" @click="filter = 'active'">Active</button>
             <button class="btn" :class="{ active: filter == 'completed' }" @click="filter = 'completed'">Completed</button>
           </div>
-
           <transition name="fade">
             <button class="btn badge badge-pill badge-danger" v-if="showClearCompleted" @click="clearCompleted">
                 Clear Completed
@@ -33,41 +28,28 @@
 
 <script>
 import TodoItem from './TodoItem'
+import axios from 'axios'
+
+axios.defaults.baseURL= 'http://localhost:8000/api';
 export default {
+
   name: 'todo-list',
   components: {TodoItem},
   data () {
     return {
       newTodo: '',
       beforeEditCache: '',
-      idForTodod: 3,
+      idForTodo: 3,
       filter: 'all',
-      todos: [
-        {
-          'id': 1,
-          'title': 'Laravel',
-          'completed': false,
-          'editing': false
-        },
-         {
-          'id': 2,
-          'title': 'Bootstrap',
-          'completed': false,
-          'editing': false
-        },
-         {
-          'id': 3,
-          'title': 'Vue',
-          'completed': false,
-          'editing': false
-        }
-      ]
+      todos: []
     }
   },
   created() {
     eventBus.$on('removedTodo',(index) => this.removeTodo(index))
     eventBus.$on('finishedEdit',(data) => this.finishedEdit(data))
+    this.fetch();
   },
+
   computed: {
     remaining() {
       return this.todos.filter(todo => !todo.completed).length
@@ -95,21 +77,33 @@ export default {
     }
   },
   methods: {
+    fetch(){
+       axios.get('/todos')
+            .then(response => {
+              this.todos = response.data;
+            })
+            .catch(error => {
+              console.log(error);
+            })
+    },
     addTodo() {
       if(this.newTodo.trim().length == 0) {
         return
       }
+        axios.post('/todos', {
+            id: this.idForTodo,
+            title: this.newTodo,
+            completed: false,
+            editing: false
+          })
+          .then(function (response) {
+                this.newTodo = '',
+                this.idForTodo++
+          })
+          .catch(function (error) {
+          })
+           this.fetch()
 
-      this.todos.push({
-        id: this.idForTodod,
-        title: this.newTodo,
-        completed: false,
-        editing: false
-
-      })
-
-      this.newTodo = '',
-      this.idForTodod++
     },
     finishedEdit(data){
         this.todos.splice(data.index , 1 , data.todo)
@@ -124,6 +118,7 @@ export default {
     },
 
     clearCompleted() {
+      /** test */
       this.todos = this.todos.filter(todo => !todo.completed)
     }
 

@@ -23,7 +23,8 @@ export default {
 
 * body {
   /* background-color: rgba(4, 156, 37, 0.527);  */
-
+  background: #343a40;
+  color: azure;
   box-sizing: border-box;
 }
 
@@ -37,7 +38,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* text-align: center; */
-  color: #2c3e50;
+  /* color: #2c3e50; */
   margin-top: 60px;
   font-size: 20px;
 }
